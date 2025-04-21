@@ -3,11 +3,16 @@ import data from '@/lib/data'
 import { toSlug } from '../../lib/utils'
 import {
   getAllCategories,
+  getProductsByTag,
   getProductsForCard,
 } from '@/lib/actions/product.actions'
 import { HomeCard } from '@/components/shared/home/home-card'
+import { Card, CardContent } from '@/components/ui/card'
+import ProductSlider from '@/components/shared/product/product-slider'
 
 export default async function Page() {
+  const todaysDeals = await getProductsByTag({ tag: 'todays-deal' })
+
   const categories = (await getAllCategories()).slice(0, 4)
   const newArrivals = await getProductsForCard({
     tag: 'new-arrival',
@@ -66,6 +71,11 @@ export default async function Page() {
       <div className='md:p-4 md:space-y-4 bg-border'>
         <HomeCard cards={cards} />
       </div>
+      <Card className='w-full rounded-none'>
+        <CardContent className='p-4 items-center gap-3'>
+          <ProductSlider title={"Today's Deals"} products={todaysDeals} />
+        </CardContent>
+      </Card>
     </>
   )
 }
