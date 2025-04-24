@@ -43,6 +43,8 @@ import {
   AVAILABLE_PAYMENT_METHODS,
   DEFAULT_PAYMENT_METHOD,
 } from '@/lib/constants'
+import { toast } from 'sonner'
+import { createOrder } from '@/lib/actions/order.actions'
 
 const shippingAddressDefaultValues =
   process.env.NODE_ENV === 'development'
@@ -83,6 +85,7 @@ const CheckoutForm = () => {
     setPaymentMethod,
     updateItem,
     removeItem,
+    clearCart,
     setDeliveryDateIndex,
   } = useCartStore()
   const isMounted = useIsMounted()
@@ -113,7 +116,29 @@ const CheckoutForm = () => {
   const [isDeliveryDateSelected, setIsDeliveryDateSelected] =
     useState<boolean>(false)
 
-  const handlePlaceOrder = async () => {}
+  const handlePlaceOrder = async () => {
+    const res = await createOrder({
+      items,
+      shippingAddress,
+      expectedDeliveryDate: calculateFutureDate(
+        AVAILABLE_DELIVERY_DATES[deliveryDateIndex!].daysToDeliver
+      ),
+      deliveryDateIndex,
+      paymentMethod,
+      itemsPrice,
+      shippingPrice,
+      taxPrice,
+      totalPrice,
+    })
+    if (!res.success) {
+      toast.error(res.message || 'Failed to create order')
+    } else {
+      toast.success(res.message || 'Order created successfully')
+
+      clearCart()
+      router.push(`/checkout/${res.data?.orderId}`)
+    }
+  }
 
   const handleSelectPaymentMethod = () => {
     setIsAddressSelected(true)
