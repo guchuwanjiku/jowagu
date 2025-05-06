@@ -84,3 +84,6 @@ export type SiteLanguage = z.infer<typeof SiteLanguageSchema>
 export type SiteCurrency = z.infer<typeof SiteCurrencySchema>
 export type PaymentMethod = z.infer<typeof PaymentMethodSchema>
 export type DeliveryDate = z.infer<typeof DeliveryDateSchema>
+export interface IProductUpdateInput extends IProductInput {
+  _id: string
+}
